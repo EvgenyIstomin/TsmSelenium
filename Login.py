@@ -1,59 +1,40 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
 import unittest
 
-class UntitledTestCase(unittest.TestCase):
-    def setUp(self):
-        self.driver = webdriver.Chrome()
-        self.driver.implicitly_wait(30)
-        self.base_url = "https://www.katalon.com/"
-        self.verificationErrors = []
-        self.accept_next_alert = True
-    
-    def test_untitled_test_case(self):
-        driver = self.driver
-        driver.get("http://tsm-website-dev.s3-website-us-east-1.amazonaws.com/auth/sign-in")
-        driver.find_element_by_name("password").clear()
-        driver.find_element_by_name("password").send_keys("Istomin18")
-        driver.find_element_by_name("login").clear()
-        driver.find_element_by_name("login").send_keys("istomin.ev@gmail.com")
-        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Remember me'])[1]/following::button[1]").click()
-        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Invoices'])[1]/following::span[1]").click()
-        driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Settings'])[1]/following::span[1]").click()
-        driver.find_element_by_name("password").clear()
-        driver.find_element_by_name("password").send_keys("Istomin18")
-        driver.find_element_by_name("login").clear()
-        driver.find_element_by_name("login").send_keys("istomin.ev@gmail.com")
-    
-    def is_element_present(self, how, what):
-        try: self.driver.find_element(by=how, value=what)
-        except NoSuchElementException as e: return False
-        return True
-    
-    def is_alert_present(self):
-        try: self.driver.switch_to.alert()
-        except NoAlertPresentException as e: return False
-        return True
-    
-    def close_alert_and_get_its_text(self):
-        try:
-            alert = self.driver.switch_to.alert()
-            alert_text = alert.text
-            if self.accept_next_alert:
-                alert.accept()
-            else:
-                alert.dismiss()
-            return alert_text
-        finally: self.accept_next_alert = True
-    
-    def tearDown(self):
-        self.driver.quit()
-        self.assertEqual([], self.verificationErrors)
 
-if __name__ == "__main__":
-    unittest.main()
+class LoginTestCase(unittest.TestCase):
+    def setUp(self):
+        self.wd = webdriver.Chrome()
+        self.wd.implicitly_wait(30)
+
+    def test_login(self):
+        wd = self.wd
+        # open home page
+        self.openHomePage(wd)
+        # login
+        self.login(wd, username = "istomin.ev@gmail.com", password = "Istomin18")
+        # log out
+        self.logout(wd)
+
+    def logout(self, wd):
+        wd.find_element_by_xpath(
+            "(.//*[normalize-space(text()) and normalize-space(.)='Settings'])[1]/following::span[1]").click()
+
+    def login(self, wd, username, password):
+        wd.find_element_by_name("login").clear()
+        wd.find_element_by_name("login").send_keys(username)
+        wd.find_element_by_name("password").clear()
+        wd.find_element_by_name("password").send_keys(password)
+        wd.find_element_by_css_selector("(button.btn.btn-primary.btn-lg.btn-block").click()
+        # wd.find_element_by_xpath(
+        #     "(.//*[normalize-space(text()) and normalize-space(.)='Remember me'])[1]/following::button[1]").click()
+
+    def openHomePage(self, wd):
+        wd.get("http://tsm-website-dev.s3-website-us-east-1.amazonaws.com/auth/sign-in")
+
+    def tearDown(self):
+        self.wd.quit()
+
+# if __name__ == "__main__":
+#     unittest.main()

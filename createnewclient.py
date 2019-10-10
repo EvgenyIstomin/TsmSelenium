@@ -2,6 +2,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.action_chains import ActionChains
+from client import Client
 
 
 class TestCreatenewclient():
@@ -15,17 +16,24 @@ class TestCreatenewclient():
 
     def test_create_new_client(self):
         driver = self.driver
-        self.open_home_page(driver)
         self.login(driver, username="istomin.ev@gmail.com", password="Istomin18" )
+        self.create_new_client(driver)
+        self.logout(driver)
+
+    def create_new_client(self, driver):
         self.open_all_clients_page(driver)
         self.open_new_client_general_page(driver)
-        self.fillout_client_general_page(driver)
+        self.fillout_client_general_page(driver,
+                                         Client("'English'", "name_field", "Legal_name_field", "primary_email_field"))
+        # Client("'English'", "name_field", "Legal_name_field", "primary_email_field",
+        #        "Secondary_email_field", "Primary_phone_field", "secondary_phone_field",
+        #        "fax_field", "78748", "country_field", "TX", "city_field"))
+        #
         self.open_client_billing_page(driver)
         self.fillout_client_billing_page(driver)
         self.press_create_client_button(driver)
         self.mark_client_as_deleted(driver)
         self.open_all_clients_page(driver)
-        self.logout(driver)
 
     def logout(self, driver):
         driver.find_element(By.CSS_SELECTOR, "li:nth-child(10) .nav-label").click()
@@ -59,42 +67,42 @@ class TestCreatenewclient():
     def open_client_billing_page(self, driver):
         driver.find_element(By.LINK_TEXT, "Billing").click()
 
-    def fillout_client_general_page(self, driver):
+    def fillout_client_general_page(self, driver, client):
         # element = driver.find_element(By.LINK_TEXT, "Settings")
         # actions = ActionChains(driver)
         # actions.move_to_element(element).perform()
         driver.find_element(By.ID, "input-preferredLanguage").click()
         dropdown = driver.find_element(By.ID, "input-preferredLanguage")
-        dropdown.find_element(By.XPATH, "//option[. = 'English']").click()
+        dropdown.find_element(By.XPATH, "//option[. = %s]" % client.preferred_language).click()
         driver.find_element(By.ID, "input-preferredLanguage").click()
         driver.find_element(By.ID, "input-name").click()
-        driver.find_element(By.ID, "input-name").send_keys("name_field")
+        driver.find_element(By.ID, "input-name").send_keys(client.name)
         driver.find_element(By.ID, "input-legalName").click()
-        driver.find_element(By.ID, "input-legalName").send_keys("Legal_name_field")
+        driver.find_element(By.ID, "input-legalName").send_keys(client.legal_name)
         driver.find_element(By.ID, "input-email").click()
-        driver.find_element(By.ID, "input-email").send_keys("primary_email_field")
+        driver.find_element(By.ID, "input-email").send_keys(client.primary_email)
         driver.find_element(By.ID, "input-email2").click()
-        driver.find_element(By.ID, "input-email2").send_keys("Secondary_email_field")
+        driver.find_element(By.ID, "input-email2").send_keys(client.secondary_email)
         driver.find_element(By.ID, "input-phone").click()
-        driver.find_element(By.ID, "input-phone").send_keys("Primary_phone_field")
+        driver.find_element(By.ID, "input-phone").send_keys(client.primary_phone)
         driver.find_element(By.ID, "input-phone2").click()
-        driver.find_element(By.ID, "input-phone2").send_keys("secondary_phone_field")
+        driver.find_element(By.ID, "input-phone2").send_keys(client.secondary_phone)
         driver.find_element(By.ID, "input-fax").click()
-        driver.find_element(By.ID, "input-fax").send_keys("fax_field")
+        driver.find_element(By.ID, "input-fax").send_keys(client.fax)
         driver.find_element(By.ID, "input-zip").click()
-        driver.find_element(By.ID, "input-zip").send_keys("78748")
+        driver.find_element(By.ID, "input-zip").send_keys(client.postal_code)
         driver.find_element(By.ID, "input-country").click()
-        driver.find_element(By.ID, "input-country").send_keys("country_field")
+        driver.find_element(By.ID, "input-country").send_keys(client.country)
         driver.find_element(By.ID, "input-state").click()
-        driver.find_element(By.ID, "input-state").send_keys("TX")
+        driver.find_element(By.ID, "input-state").send_keys(client.state)
         driver.find_element(By.ID, "input-city").click()
-        driver.find_element(By.ID, "input-city").send_keys("city_field")
+        driver.find_element(By.ID, "input-city").send_keys(client.city)
         driver.find_element(By.ID, "input-addressLine").click()
-        driver.find_element(By.ID, "input-addressLine").send_keys("Address1_field")
+        driver.find_element(By.ID, "input-addressLine").send_keys(client.address_line_1)
         driver.find_element(By.ID, "input-addressLine2").click()
-        driver.find_element(By.ID, "input-addressLine2").send_keys("Address2_field")
+        driver.find_element(By.ID, "input-addressLine2").send_keys(client.address_line_2)
         driver.find_element(By.ID, "input-note").click()
-        driver.find_element(By.ID, "input-note").send_keys("note_field")
+        driver.find_element(By.ID, "input-note").send_keys(client.note)
 
     def open_new_client_general_page(self, driver):
         # driver.find_element(By.CSS_SELECTOR, ".page-controls-center > .btn").click()
@@ -106,6 +114,7 @@ class TestCreatenewclient():
         driver.find_element(By.CSS_SELECTOR, "li:nth-child(6) .nav-label").click()
 
     def login(self, driver, username, password):
+        self.open_home_page(driver)
         driver.find_element(By.NAME, "login").clear()
         driver.find_element(By.NAME, "login").send_keys(username)
         driver.find_element(By.NAME, "login").clear()
@@ -113,4 +122,4 @@ class TestCreatenewclient():
         driver.find_element(By.CSS_SELECTOR, ".btn").click()
 
     def open_home_page(self, driver):
-        driver.get("http://tsm-website-dev.s3-website-us-east-1.amazonaws.com/auth/sign-in")
+        driver.get("http://tsm-website-dev.s3-website-us-east-1.amazonaws.com")

@@ -16,7 +16,7 @@ class TestCreatenewclient():
 
     def test_create_new_client(self):
         driver = self.driver
-        self.login(driver, username="istomin.ev@gmail.com", password="Istomin18" )
+        self.login(driver, username="istomin.ev@gmail.com", password="Istomin18")
         self.create_new_client(driver)
         self.logout(driver)
 
@@ -41,7 +41,6 @@ class TestCreatenewclient():
     def mark_client_as_deleted(self, driver):
         driver.find_element(By.LINK_TEXT, "Advanced").click()
         driver.find_element(By.CSS_SELECTOR, ".btn-danger").click()
-
 
     def press_create_client_button(self, driver):
         driver.find_element(By.CSS_SELECTOR, "fieldset > .btn-primary").click()

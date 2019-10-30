@@ -2,13 +2,15 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 # from selenium.webdriver.common.keys import Keys
 # from selenium.webdriver.support.ui import Select
+from fixture.session import SessionHelper
 
 
 class Application:
 
     def __init__(self):
         self.wd = webdriver.Firefox()
-        self.wd.implicitly_wait(30)
+        self.wd.implicitly_wait(60)
+        self.session = SessionHelper(self)
 
     def create_new_client(self, Client):
         self.open_all_clients_page()
@@ -19,10 +21,6 @@ class Application:
         self.press_create_client_button()
         self.mark_client_as_deleted()
         self.open_all_clients_page()
-
-    def logout(self):
-        wd = self.wd
-        wd.find_element(By.CSS_SELECTOR, "li:nth-child(10) .nav-label").click()
 
     def mark_client_as_deleted(self):
         wd = self.wd
@@ -104,19 +102,6 @@ class Application:
     def open_all_clients_page(self):
         wd = self.wd
         wd.find_element(By.CSS_SELECTOR, "li:nth-child(6) .nav-label").click()
-
-    def login(self, username, password):
-        wd = self.wd
-        self.open_home_page()
-        wd.find_element(By.NAME, "login").clear()
-        wd.find_element(By.NAME, "login").send_keys(username)
-        wd.find_element(By.NAME, "login").clear()
-        wd.find_element(By.NAME, "password").send_keys(password)
-        wd.find_element(By.CSS_SELECTOR, ".btn").click()
-
-    def open_home_page(self):
-        wd = self.wd
-        wd.get("http://tsm-website-dev.s3-website-us-east-1.amazonaws.com")
 
     def destroy(self):
         self.wd.quit()
